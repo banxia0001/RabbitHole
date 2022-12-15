@@ -44,7 +44,7 @@ public class Rabbit : MonoBehaviour
     void Start()
     {
        
-        findPlayerPos(5);
+        //findPlayerPos(5);
         canMove = false;
         gotoPos = ArrowPoint.transform.position;
     }
@@ -55,29 +55,29 @@ public class Rabbit : MonoBehaviour
     public Vector3 gotoPos;
     public float distanceOffset = 0;
 
-    public void MakeArrowAngle()
-    {
-        Arrow.transform.rotation = Quaternion.AngleAxis(angleRotationNow * modi, Vector3.forward);
-        //Arrow.transform.rotation = transform.rotation;
-    }
+    //public void MakeArrowAngle()
+    //{
+    //    Arrow.transform.rotation = Quaternion.AngleAxis(angleRotationNow * modi, Vector3.forward);
+    //    //Arrow.transform.rotation = transform.rotation;
+    //}
 
-    public void MakeArrowDistance()
-    {
-        //float distance = Vector3.Distance(this.transform.position, Girl.transform.position);
-        //if (distance > 10) distance = 10;
-        float distance = 10;
-        distanceOffset = 2 + distance / .8f;
+    //public void MakeArrowDistance()
+    //{
+    //    //float distance = Vector3.Distance(this.transform.position, Girl.transform.position);
+    //    //if (distance > 10) distance = 10;
+    //    float distance = 10;
+    //    distanceOffset = 2 + distance / .8f;
 
-        ArrowPoint.transform.localPosition = new Vector3(5 + distanceOffset/10, 0, 0);
-        Vector3[] points = new Vector3[2];
+    //    ArrowPoint.transform.localPosition = new Vector3(5 + distanceOffset/10, 0, 0);
+    //    Vector3[] points = new Vector3[2];
 
-        points[0] = transform.position;
-        points[1] = ArrowPoint.transform.position;
+    //    points[0] = transform.position;
+    //    points[1] = ArrowPoint.transform.position;
 
-        lineRenderer.positionCount = points.Length;
-        lineRenderer.SetPositions(points);
+    //    lineRenderer.positionCount = points.Length;
+    //    lineRenderer.SetPositions(points);
        
-    }
+    //}
 
 
     public void SetDestination(float time)
@@ -173,17 +173,17 @@ public class Rabbit : MonoBehaviour
         }
     }
 
-    private void findPlayerPos(float value)
-    {
-        Vector3 dir = Girl.transform.position - transform.position;
-        //if (wandering)
-        //{
-        //    value += 300;
-        //    angleRotationShould = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        //}
+    //private void findPlayerPos(float value)
+    //{
+    //    Vector3 dir = Girl.transform.position - transform.position;
+    //    //if (wandering)
+    //    //{
+    //    //    value += 300;
+    //    //    angleRotationShould = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+    //    //}
         
-        angleRotationShould = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-    }
+    //    angleRotationShould = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+    //}
     Quaternion LookDir;
     void LookPlayer()
     {

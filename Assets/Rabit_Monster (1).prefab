@@ -387,8 +387,6 @@ MonoBehaviour:
   - -0.0001
   - -0.025
   - -0.03
-  - 16
-  - -16
   HardMode: 1
   lineRenderer: {fileID: 8974131717876284250}
   Arrow: {fileID: 8974131717876284228}
@@ -398,6 +396,7 @@ MonoBehaviour:
   gotoPos: {x: 0, y: 0, z: 0}
   distanceOffset: 0
   Stun: 0
+  StunedTimes: 0
 --- !u!50 &8974131719534512094
 Rigidbody2D:
   serializedVersion: 4

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Girl : MonoBehaviour
 {
@@ -181,7 +182,8 @@ public class Girl : MonoBehaviour
         health--;
         if (health <= 0)
         {
-            Controller.LoadSceneDeath();
+            //Controller.LoadSceneDeath();
+            SceneManager.LoadScene(4);
         }
 
         SetHeart();
