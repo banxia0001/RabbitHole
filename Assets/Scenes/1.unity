@@ -8021,7 +8021,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3525744344637883618, guid: 0d4c15f2ccf3b5f4e8542bcce0a1132b, type: 3}
       propertyPath: diffModi
-      value: 0
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 3525744344637883618, guid: 0d4c15f2ccf3b5f4e8542bcce0a1132b, type: 3}
       propertyPath: hardRate

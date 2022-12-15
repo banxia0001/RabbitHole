@@ -4784,7 +4784,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3525744344637883618, guid: 0d4c15f2ccf3b5f4e8542bcce0a1132b, type: 3}
       propertyPath: diffModi
-      value: 2
+      value: 1.4
       objectReference: {fileID: 0}
     - target: {fileID: 3525744344637883618, guid: 0d4c15f2ccf3b5f4e8542bcce0a1132b, type: 3}
       propertyPath: rabitnum

@@ -193,14 +193,14 @@ public class Rabbit : MonoBehaviour
         if (canMove && isBack < 0)
         {
             if (isDying) return;
-            float speed = 3 - Vector3.Distance(this.transform.position, gotoPos);
+            //float speed = 3 - Vector3.Distance(this.transform.position, gotoPos);
          
-            if (speed < 0) speed = .5f;
+            //if (speed < 0) speed = .5f;
 
             //Debug.Log(thisSpeed);
             gotoPos = transform.TransformPoint(Vector3.right * 2);
             Vector2 tempTarget = new Vector2(-gotoPos.x, gotoPos.y);
-            rb.AddForce(transform.right / 2 * (baseSpeed + speed * baseSpeed/5), ForceMode2D.Impulse);
+            rb.AddForce(transform.right / 1.2f * baseSpeed, ForceMode2D.Impulse);
         }
 
     }

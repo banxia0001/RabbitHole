@@ -11,8 +11,18 @@ public class DoorTrigger : MonoBehaviour
         if (other.tag == "Player")
         {
             if (enter) return;
+
+
             enter = true;
-            Controller.LoadScene(GameObject.FindGameObjectWithTag("GameController").GetComponent<WorldController>().sceneNum + 1);
+
+            int num = GameObject.FindGameObjectWithTag("GameController").GetComponent<WorldController>().sceneNum;
+            if (num == 3)
+            {
+                Controller.LoadScene(0);
+
+            }
+            Controller.LoadScene(num++);
         }
     }
+
 }

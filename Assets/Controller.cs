@@ -8,6 +8,7 @@ public class Controller : MonoBehaviour
     public static bool start = false;
     public static void LoadScene(int sceneNum)
     {
+        
         SceneManager.LoadScene(sceneNum);
     }
 
