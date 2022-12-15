@@ -34,6 +34,7 @@ public class Girl : MonoBehaviour
     public Vector2 rightOffsetDown;
 
     public AudioSource hitSound;
+    public AudioSource deathSound;
     private void SetHeart()
     {
         for (int i = 0; i < myHearts.Length; i++)
@@ -56,27 +57,27 @@ public class Girl : MonoBehaviour
         //speed = minSpeed;
         isBack = 0f;
     }
-    public void Update()
+    public void FixedUpdate()
     {
         Vector3 dir = doorAnim.gameObject.transform.position - myGuide.transform.position;
         float angleRotationShould = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         myGuide.transform.rotation = Quaternion.Euler(0, 0, angleRotationShould);
         isHit -= Time.deltaTime;
-        //checkHitWall();
+        checkHitWall();
         //transform.rotation = Quaternion.Euler(0, 0, 0);
-       
-        if (!canMove) return;
 
-        //if (isBack > 0)
-        //{
-        //    isBack -= Time.fixedDeltaTime;
-        //    return;
-        //}
-       
-        //speed += (10 - speed) * accelerate * Time.fixedDeltaTime;
-        //if (speed > maxSpeed) speed = maxSpeed;
+        if (isBack > 0)
+        {
+            isBack -= Time.fixedDeltaTime;
+            return;
+        }
+
+
+        if (!canMove) return;
+        if (isDying) return;
+
         rb.AddForce(speed * transform.right);
-        //rb.velocity = transform.right * speed;    
+     
     }
 
     public void EnterTimeStop()
@@ -112,13 +113,11 @@ public class Girl : MonoBehaviour
 
     private void HitByWall(Vector2 comeDir, float speedUp)
     {
+        rb.velocity = Vector3.zero;
         Vector3 comeDir3D = new Vector3(comeDir.x, comeDir.y, 0);
         Vector3 dir = (comeDir3D - new Vector3(0, 0, 0)).normalized;
-        //Debug.Log(dir);
-        //rb.AddForce(dir * -70f * speedUp);
-
-        isBack = .3f;
-        //speed = minSpeed;
+        rb.AddForce(-dir * 2.2f, ForceMode2D.Impulse);
+        isBack = .15f;
     }
 
     void OnDrawGizmos()
@@ -137,24 +136,7 @@ public class Girl : MonoBehaviour
         Gizmos.DrawWireSphere((Vector2)transform.position + leftOffsetDown, collisionRadius);
     }
 
-    private bool enter = false;
-    //private void OnTriggerEnter2D(Collider2D other)
-    //{
 
-    //    if (other.tag == "Door")
-    //    {
-    //        if (enter) return;
-    //        enter = true;
-    //        Controller.LoadScene();
-    //    }
-    //}
-    private void OnCollisionEnter2D(Collision2D c)
-    {
-        if (c.gameObject.CompareTag("Wall"))
-        {
-
-        }
-    }
     public LayerMask RockMask;
     public void ClearRocksInRadius()
     {
@@ -168,23 +150,46 @@ public class Girl : MonoBehaviour
         }
     }
     private float isHit;
-    public void hitBy()
+    public void hitBy(bool hit)
     {
         if (isHit > 0) return;
+
         hitSound.Play();
         WorldController WC = GameObject.FindGameObjectWithTag("GameController").GetComponent<WorldController>();
         WC.camAnim.SetTrigger("shake");
         //isBack = 0.1f;
-        isHit = 0.33f;
-        GameObject go = Instantiate(blood, transform.position, Quaternion.identity, WC.WorldFolder.transform.parent) as GameObject;
+        isHit = 0.36f;
 
-        health--;
-        if (health <= 0)
+        if (hit)
         {
-            Controller.LoadSceneDeath();
-        }
+            GameObject go = Instantiate(blood, transform.position, Quaternion.identity, WC.WorldFolder.transform.parent) as GameObject;
 
-        SetHeart();
+            health--;
+
+            if (health <= 0)
+            {
+                if (!isDying)
+                {
+                    StartCoroutine(death());
+                }
+                   // Controller.LoadScene(GameObject.FindGameObjectWithTag("GameController").GetComponent<WorldController>().sceneNum);
+            }
+
+            SetHeart();
+        }
+       
+    }
+
+    private bool isDying = false;
+    private IEnumerator death()
+    {
+        isDying = true;
+        canMove = false;
+        deathSound.Play();
+        yield return new WaitForSeconds(.4f);
+     
+
+        Controller.LoadScene(GameObject.FindGameObjectWithTag("GameController").GetComponent<WorldController>().sceneNum);
     }
 
 }

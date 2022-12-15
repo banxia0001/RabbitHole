@@ -6,17 +6,9 @@ using UnityEngine.SceneManagement;
 public class Controller : MonoBehaviour
 {
     public static bool start = false;
-    public static int sceneNumber;
-
-
-    public static void LoadScene()
+    public static void LoadScene(int sceneNum)
     {
-        Controller.sceneNumber++;
-        SceneManager.LoadScene(Controller.sceneNumber);
+        SceneManager.LoadScene(sceneNum);
     }
 
-    public static void LoadSceneDeath()
-    {
-        SceneManager.LoadScene(0);
-    }
 }

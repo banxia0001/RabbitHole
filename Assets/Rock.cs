@@ -20,7 +20,7 @@ public class Rock : MonoBehaviour
                 }
             }
         }
-        Debug.Log("Spawned");
+       //Debug.Log("Spawned");
         GetComponent<SpriteRenderer>().sprite = RockSps[Random.Range(0, RockSps.Length)];
     }
 

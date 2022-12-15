@@ -7,6 +7,7 @@ TagManager:
   - Wall
   - Rabit
   - Door
+  - SpawnPos
   layers:
   - Default
   - TransparentFX

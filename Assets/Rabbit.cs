@@ -8,9 +8,7 @@ public class Rabbit : MonoBehaviour
     public Animator anim;
     public bool canMove = false;
   
-    public float angleRotationNow = 0;
-    public float angleRotationShould = 0;
-    public float angleTurningModi = 1;
+   
 
     public bool wandering = false;
 
@@ -22,31 +20,26 @@ public class Rabbit : MonoBehaviour
     public float baseSpeed;
     public float isBack;
     public float[] ModiList;
-    public float[] HarderModiList;
-    public bool HardMode;
+    //public float[] HarderModiList;
+
 
     private void Awake()
     {
         Girl = GameObject.FindGameObjectWithTag("Player");
-        if (HardMode)
-        {
-            modi = HarderModiList[Random.Range(1, HarderModiList.Length)];
-        }
-        else
-        {
-            modi = ModiList[Random.Range(1, ModiList.Length)];
-        }
+        
+
+        rabBirth();
     }
-    public void ResetModi()
-    {
-        modi = HarderModiList[Random.Range(1, HarderModiList.Length)];
-    }
+    //public void ResetModi()
+    //{
+    //    modi = ModiList[Random.Range(1, HarderModiList.Length)];
+    //}
     void Start()
     {
        
-        findPlayerPos(5);
         canMove = false;
         gotoPos = ArrowPoint.transform.position;
+        LookPlayer();
     }
 
     public LineRenderer lineRenderer;
@@ -55,11 +48,13 @@ public class Rabbit : MonoBehaviour
     public Vector3 gotoPos;
     public float distanceOffset = 0;
 
-    public void MakeArrowAngle()
-    {
-        Arrow.transform.rotation = Quaternion.AngleAxis(angleRotationNow * modi, Vector3.forward);
-        //Arrow.transform.rotation = transform.rotation;
-    }
+
+   
+    //public void MakeArrowAngle()
+    //{
+    //    Arrow.transform.rotation = Quaternion.AngleAxis(angleRotation * modi, Vector3.forward);
+    //    //Arrow.transform.rotation = transform.rotation;
+    //}
 
     public void MakeArrowDistance()
     {
@@ -97,103 +92,123 @@ public class Rabbit : MonoBehaviour
             Stun = !Stun;
         }
     }
+
+    public GameObject birthEffect;
+    public GameObject deathEffect;
+    private bool isDying;
+    public void rabDeath()
+    {
+        if (isDying) return;
+        isDying = true;
+        GameObject go = Instantiate(deathEffect, transform.position, Quaternion.identity, this.gameObject.transform.parent) as GameObject;
+        StartCoroutine(death());
+    }
+
+    public IEnumerator death()
+    {
+        rb.velocity = Vector3.zero;
+        canMove = false;
+        anim.SetTrigger("death");
+        yield return new WaitForSeconds(.4f);
+        Destroy(this.gameObject);
+    }
+    public void rabBirth()
+    {
+        GameObject go = Instantiate(birthEffect, transform.position, Quaternion.identity, this.gameObject.transform.parent) as GameObject;
+    }
     public void StopMoving()
     {
         lineRenderer.gameObject.SetActive(false);
         rb.velocity = Vector3.zero;
         canMove = false;
-        if (Vector3.Distance(transform.position, Girl.transform.position) > 30)
-        {
-            GameObject.FindGameObjectWithTag("GameController").GetComponent<WorldController>().SpawnRab();
-            Destroy(gameObject);
-        }
     }
     public void EnterTimeStop()
     {
         if (!Stun)
         {
             lineRenderer.gameObject.SetActive(true);
-            
-            AngleChangedSum = 0;
-            AngleChangedTemp = 0;
             LookPlayer();
         }
         rb.velocity = Vector3.zero;
         canMove = false;
-        
-        //if (Random.Range(0, 3) < 2)
-        //{
-        //    findPlayerPos(19);
-        //}
     }
-    float AngleChangedTemp,AngleChangedSum;
-    bool IsOver180;
-    void Update()
-    {
-        //if (angleRotationNow < angleRotationShould) angleRotationNow += angleTurningModi * Time.deltaTime;
-        //if (angleRotationNow > angleRotationShould) angleRotationNow -= angleTurningModi * Time.deltaTime;
-        //transform.rotation = Quaternion.AngleAxis(angleRotationNow * modi, Vector3.forward);
-        Rabit.transform.rotation = Quaternion.Euler(0, 0, 0);
-        LookConstantDir.transform.right= Girl.transform.position - transform.position;
-        //angleRotationNow = LookConstantDir.transform.rotation.z - LookOnceDir.transform.rotation.z;
-        //Arrow.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angleRotationNow * modi));
-        //Arrow.transform.position = Vector3.ProjectOnPlane(Arrow.transform.position, transform.forward);
-        ArrowPoint.transform.localPosition = new Vector3(5 + 8 / 10, 0, 0);
-        //float AngleChanged = Quaternion.Angle(Rabit.transform.rotation, LookConstantDir.transform.rotation);
-        float AngleChanged = Rabit.transform.rotation.eulerAngles.z - LookConstantDir.transform.rotation.eulerAngles.z;
-        AngleChangedSum += AngleChanged - AngleChangedTemp;
-        AngleChangedTemp = AngleChanged;
-        
-        transform.rotation = LookDir * Quaternion.Euler(Vector3.forward * AngleChangedSum*modi);
-        Vector3[] points = new Vector3[2];
+   // float AngleChangedTemp,AngleChangedSum;
 
-        points[0] = transform.position;
-        points[1] = ArrowPoint.transform.position;
 
-        lineRenderer.positionCount = points.Length;
-        lineRenderer.SetPositions(points);
-        
-        //MakeArrowAngle();
-        //MakeArrowDistance();
-
-        //if (transform.position != gotoPos)
-        //{
-        //    transform.position = Vector3.Lerp(transform.position, gotoPos, 0.3f);
-        //}
-        //rb.velocity = 10 * transform.right;
-        isBack -= Time.deltaTime;
-        if (canMove && isBack < 0)
-        {
-            float distance = Vector3.Distance(this.transform.position, gotoPos);
-            float thisSpeed = speedModi * distance + baseSpeed;
-            //Debug.Log(thisSpeed);
-            gotoPos = transform.TransformPoint( Vector3.right* 2);
-            Vector2 tempTarget = new Vector2(-gotoPos.x, gotoPos.y);
-            rb.AddForce(transform.right/3,ForceMode2D.Impulse);
-        }
-    }
-
-    private void findPlayerPos(float value)
-    {
-        Vector3 dir = Girl.transform.position - transform.position;
-        //if (wandering)
-        //{
-        //    value += 300;
-        //    angleRotationShould = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        //}
-        
-        angleRotationShould = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-    }
-    Quaternion LookDir;
+    public float angleRotation = 0;
+    private Vector2 faceDirection;
+    public float angleTurningModi = 1;
     void LookPlayer()
     {
-        Vector3 dir = Girl.transform.position - transform.position;
-        //LookOnceDir.transform.right = dir;
-        transform.right = dir;
-        LookDir = transform.rotation;
+      
+        faceDirection = (Girl.transform.position - transform.position).normalized;
+        //monster_angle = Mathf.Atan2(faceDirection.y, faceDirection.x) * Mathf.Rad2Deg + randomMove;
+        angleRotation = Mathf.Atan2(faceDirection.y, faceDirection.x) * Mathf.Rad2Deg;
+
+        //Vector3 dir = Girl.transform.position - transform.position;
+        ////LookOnceDir.transform.right = dir;
+        //transform.right = dir;
+        //LookDir = transform.rotation;
         //Arrow.transform.right = dir;
         //Debug.Log("Looked");
     }
+    private void Update()
+    {
+        //if (angleRotationNow < angleRotationShould) angleRotationNow += angleTurningModi * Time.deltaTime;
+        ////if (angleRotationNow > angleRotationShould) angleRotationNow -= angleTurningModi * Time.deltaTime;
+
+        transform.eulerAngles = new Vector3(0, 0, angleRotation * modi);
+        //transform.rotation = Quaternion.AngleAxis(angleRotationNow * modi, Vector3.forward);
+        Rabit.transform.rotation = Quaternion.Euler(0, 0, 0);
+        
+
+        //LookConstantDir.transform.right = Girl.transform.position - transform.position;
+        ////angleRotationNow = LookConstantDir.transform.rotation.z - LookOnceDir.transform.rotation.z;
+        ////Arrow.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angleRotationNow * modi));
+        ////Arrow.transform.position = Vector3.ProjectOnPlane(Arrow.transform.position, transform.forward);
+        //ArrowPoint.transform.localPosition = new Vector3(5 + 8 / 10, 0, 0);
+        ////float AngleChanged = Quaternion.Angle(Rabit.transform.rotation, LookConstantDir.transform.rotation);
+        //float AngleChanged = Rabit.transform.rotation.eulerAngles.z - LookConstantDir.transform.rotation.eulerAngles.z;
+        //AngleChangedSum += AngleChanged - AngleChangedTemp;
+        //AngleChangedTemp = AngleChanged;
+
+        //transform.rotation = LookDir * Quaternion.Euler(Vector3.forward * AngleChangedSum * modi);
+
+
+        Vector3[] points = new Vector3[2];
+        points[0] = transform.position;
+        points[1] = ArrowPoint.transform.position;
+        lineRenderer.positionCount = points.Length;
+        lineRenderer.SetPositions(points);
+    }
+
+    public void SetValue(float speedModi)
+    {
+        baseSpeed += speedModi;
+        modi = ModiList[Random.Range(0, ModiList.Length)];
+    }
+    void FixedUpdate()
+    {
+        isBack -= Time.deltaTime;
+        if (canMove && isBack < 0)
+        {
+            if (isDying) return;
+            float speed = 3 - Vector3.Distance(this.transform.position, gotoPos);
+         
+            if (speed < 0) speed = .5f;
+
+            //Debug.Log(thisSpeed);
+            gotoPos = transform.TransformPoint(Vector3.right * 2);
+            Vector2 tempTarget = new Vector2(-gotoPos.x, gotoPos.y);
+            rb.AddForce(transform.right / 2 * (baseSpeed + speed * baseSpeed/5), ForceMode2D.Impulse);
+        }
+
+    }
+
+
+
+    Quaternion LookDir;
+    
     public bool Stun;
     public int StunedTimes=0;
     private void OnCollisionEnter2D(Collision2D other)
@@ -210,7 +225,7 @@ public class Rabbit : MonoBehaviour
             StunedTimes++;
             if (StunedTimes > 3)
             {
-                Destroy(gameObject);
+                rabDeath();
             }
             //findPlayerPos(5);
         }
@@ -222,19 +237,22 @@ public class Rabbit : MonoBehaviour
             StunedTimes++;
             if (StunedTimes > 3)
             {
-                Destroy(gameObject);
+                rabDeath();
             }
         }
 
         if (other.gameObject.CompareTag("Player"))
         {
-            //hitback
-            isBack = .1f;
-            Vector2 newVector = gameObject.transform.position - other.gameObject.transform.position;
-            rb.AddForce(newVector*3 ,ForceMode2D.Impulse);
 
-            other.gameObject.GetComponent<Girl>().hitBy();
-            other.gameObject.GetComponent<Rigidbody2D>().AddForce(-newVector*2, ForceMode2D.Impulse);
+            //hitback
+            isBack = .2f;
+            Vector2 newVector = gameObject.transform.position - other.gameObject.transform.position;
+            rb.AddForce(newVector* 12 ,ForceMode2D.Impulse);
+
+
+
+            other.gameObject.GetComponent<Girl>().hitBy(canMove);
+            other.gameObject.GetComponent<Rigidbody2D>().AddForce(-newVector* 12, ForceMode2D.Impulse);
             //findPlayerPos(5);
             LookPlayer();
         }
