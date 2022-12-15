@@ -7,8 +7,8 @@ public class Girl : MonoBehaviour
     //public WorldController WC;
     public int health = 3;
     public float speed = 10f;
-    public float maxSpeed;
-    public float minSpeed;
+    //public float maxSpeed;
+    //public float minSpeed;
     public float accelerate;
     public float isBack = 0;
     public Rigidbody2D rb;
@@ -53,7 +53,7 @@ public class Girl : MonoBehaviour
         health = 3;
         SetHeart();
         rb = gameObject.GetComponent<Rigidbody2D>();
-        speed = minSpeed;
+        //speed = minSpeed;
         isBack = 0f;
     }
     public void Update()
@@ -62,19 +62,19 @@ public class Girl : MonoBehaviour
         float angleRotationShould = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         myGuide.transform.rotation = Quaternion.Euler(0, 0, angleRotationShould);
         isHit -= Time.deltaTime;
-        checkHitWall();
+        //checkHitWall();
         //transform.rotation = Quaternion.Euler(0, 0, 0);
        
         if (!canMove) return;
 
-        if (isBack > 0)
-        {
-            isBack -= Time.fixedDeltaTime;
-            return;
-        }
+        //if (isBack > 0)
+        //{
+        //    isBack -= Time.fixedDeltaTime;
+        //    return;
+        //}
        
-        speed += (10 - speed) * accelerate * Time.fixedDeltaTime;
-        if (speed > maxSpeed) speed = maxSpeed;
+        //speed += (10 - speed) * accelerate * Time.fixedDeltaTime;
+        //if (speed > maxSpeed) speed = maxSpeed;
         rb.AddForce(speed * transform.right);
         //rb.velocity = transform.right * speed;    
     }
@@ -115,10 +115,10 @@ public class Girl : MonoBehaviour
         Vector3 comeDir3D = new Vector3(comeDir.x, comeDir.y, 0);
         Vector3 dir = (comeDir3D - new Vector3(0, 0, 0)).normalized;
         //Debug.Log(dir);
-        rb.AddForce(dir * -70f * speedUp);
+        //rb.AddForce(dir * -70f * speedUp);
 
         isBack = .3f;
-        speed = minSpeed;
+        //speed = minSpeed;
     }
 
     void OnDrawGizmos()
@@ -138,17 +138,35 @@ public class Girl : MonoBehaviour
     }
 
     private bool enter = false;
-    private void OnTriggerEnter2D(Collider2D other)
-    {
+    //private void OnTriggerEnter2D(Collider2D other)
+    //{
 
-        if (other.tag == "Door")
+    //    if (other.tag == "Door")
+    //    {
+    //        if (enter) return;
+    //        enter = true;
+    //        Controller.LoadScene();
+    //    }
+    //}
+    private void OnCollisionEnter2D(Collision2D c)
+    {
+        if (c.gameObject.CompareTag("Wall"))
         {
-            if (enter) return;
-            enter = true;
-            Controller.LoadScene();
+
         }
     }
-
+    public LayerMask RockMask;
+    public void ClearRocksInRadius()
+    {
+        Collider2D[] Objs = Physics2D.OverlapCircleAll(transform.position, 11f, RockMask);
+        if (Objs.Length > 0)
+        {
+            for (int i = 0; i < Objs.Length; i++)
+            {
+                Destroy(Objs[i].gameObject);
+            }
+        }
+    }
     private float isHit;
     public void hitBy()
     {
@@ -156,7 +174,7 @@ public class Girl : MonoBehaviour
         hitSound.Play();
         WorldController WC = GameObject.FindGameObjectWithTag("GameController").GetComponent<WorldController>();
         WC.camAnim.SetTrigger("shake");
-        isBack = 0.1f;
+        //isBack = 0.1f;
         isHit = 0.33f;
         GameObject go = Instantiate(blood, transform.position, Quaternion.identity, WC.WorldFolder.transform.parent) as GameObject;
 
