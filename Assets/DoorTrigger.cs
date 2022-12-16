@@ -19,9 +19,9 @@ public class DoorTrigger : MonoBehaviour
             if (num == 3)
             {
                 Controller.LoadScene(0);
-
+                return;
             }
-            Controller.LoadScene(num++);
+            Controller.LoadScene(num + 1);
         }
     }
 

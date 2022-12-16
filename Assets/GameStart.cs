@@ -5,28 +5,76 @@ using UnityEngine;
 public class GameStart : MonoBehaviour
 {
 
-    float value = 0;
+   public float value1 = 0;
+    public float value2 = 0;
     public Animator anim;
     bool enter = false;
+    bool enterTuto = false;
     public AudioSource scream;
-    void Update()
+
+    public GameObject G1,G2;
+
+
+    private void Start()
     {
+        Controller.life = 10;
+    }
+    void FixedUpdate()
+    {
+
+        if (enter) return;
         if (Input.GetAxis("Mouse X") < 0)
         {
-            value++;
+            value1++;
         }
-        else if (Input.GetAxis("Mouse X") > 0)
+       if (Input.GetAxis("Mouse X") > 0)
         {
-            value++;
+            value2++;
         }
 
-        if (value > 20 && enter == false)
+        if (value1 > 40)
         {
-            StartCoroutine(toB());
+            tuto();
+        }
+
+        if (value2 > 40)
+        {
+            if (enterTuto)
+            {
+                tutoBack();
+
+            }
+
+            else
+            {
+                StartCoroutine(toB());
+            }
+        
         }
 
     }
 
+    public void tuto()
+    {
+        G2.SetActive(true);
+        G1.SetActive(false);
+
+        value1 = 0;
+        value2 = 0;
+
+        enterTuto = true;
+    }
+
+    public void tutoBack()
+    {
+        G2.SetActive(false);
+        G1.SetActive(true);
+
+        value1 = 0;
+        value2 = 0;
+
+        enterTuto = false;
+    }
 
     public IEnumerator toB()
     {

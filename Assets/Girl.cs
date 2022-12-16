@@ -163,7 +163,7 @@ public class Girl : MonoBehaviour
         if (hit)
         {
             GameObject go = Instantiate(blood, transform.position, Quaternion.identity, WC.WorldFolder.transform.parent) as GameObject;
-
+            deathSound.Play();
             health--;
 
             if (health <= 0)
@@ -187,9 +187,15 @@ public class Girl : MonoBehaviour
         canMove = false;
         deathSound.Play();
         yield return new WaitForSeconds(.4f);
-     
 
-        Controller.LoadScene(GameObject.FindGameObjectWithTag("GameController").GetComponent<WorldController>().sceneNum);
+        Controller.life--;
+
+        if (Controller.life <= 0)
+        {
+            Controller.LoadScene(0);
+        }
+
+        else Controller.LoadScene(GameObject.FindGameObjectWithTag("GameController").GetComponent<WorldController>().sceneNum);
     }
 
 }

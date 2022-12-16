@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using TMPro;
 
 
 public class WorldController : MonoBehaviour
@@ -27,27 +29,18 @@ public class WorldController : MonoBehaviour
 
     public GameObject Rock;
     public Transform MapFolder, MonsterFolder;
+
+    public TMP_Text lifeText;
     void Awake()
     {
         beatTime = beatTimeModi;
-        camAnim.SetTrigger("start");
+        //camAnim.SetTrigger("start");
         isStopingTime = true;
         iStopingPlayer = true;
+
         beatAnim.speed = 1 / beatTime_;
-        //for(int i = -50; i < 100; i++)
-        //{
-        //    for (int o = -50; o < 100; o++)
-        //    {
-        //        Vector3 tPos = new Vector3(i * 2 + Random.Range(-3.0f, 3.0f), o * 2 + Random.Range(-3.0f, 3.0f), 0);
-        //        Instantiate(Rock, tPos, Quaternion.identity, MapFolder);
-        //    }
-        //}
+     
         Girl.GetComponent<Girl>().ClearRocksInRadius();
-        //if (Controller.start == false)
-        //{
-        //    camAnim.SetTrigger("start");
-        //    Controller.start = true;
-        //}
     }
 
     private void Start()
@@ -55,33 +48,43 @@ public class WorldController : MonoBehaviour
         EnterStop();
     }
 
-    public float dirModiL = 1;
-    public float dirModiR = 1;
+    //public float dirModiL = 1;
+    //public float dirModiR = 1;
+
+    public float rotateSpeed;
     void Update()
     {
-        if (isStopingTime)
-        {
-            float dir = 0;
+        lifeText.text = "Life x " + Controller.life;
 
-            if (Input.GetAxis("Mouse X") < 0)
-            {
-                dir = (1.6f + dirModiL) * -.22f;
-                dirModiL += 5 * Time.deltaTime;
-            }
-            else if (Input.GetAxis("Mouse X") > 0)
-            {
-                dir = (1.6f + dirModiR) * .22f;
-                dirModiR += 5 * Time.deltaTime;
-            }
+        float mouseX = Input.GetAxisRaw("Mouse X") * rotateSpeed * Time.deltaTime;
 
-            else
-            {
-                dirModiL = 1;
-                dirModiR = 1;
-            }
+        //if (mouseX > 1f) mouseX += 1f;
+        //if (mouseX < 1f) mouseX += -1f;
+        WorldFolder.transform.RotateAround(Girl.transform.position, Vector3.forward, mouseX);
 
-            WorldFolder.transform.RotateAround(Girl.transform.position, Vector3.forward, 160 * dir * Time.deltaTime);
-        }
+        //if (isStopingTime)
+        //{
+        //    float dir = 0;
+
+        //    if (Input.GetAxis("Mouse X") < 0)
+        //    {
+        //        dir = (1.6f + dirModiL) * -.22f;
+        //        dirModiL += 5 * Time.deltaTime;
+        //    }
+        //    else if (Input.GetAxis("Mouse X") > 0)
+        //    {
+        //        dir = (1.6f + dirModiR) * .22f;
+        //        dirModiR += 5 * Time.deltaTime;
+        //    }
+
+        //    else
+        //    {
+        //        dirModiL = 1;
+        //        dirModiR = 1;
+        //    }
+
+        //    WorldFolder.transform.RotateAround(Girl.transform.position, Vector3.forward, 160 * dir * Time.deltaTime);
+        //}
         beatTime -= Time.deltaTime;
 
         if (beatTime < 0)
@@ -106,6 +109,7 @@ public class WorldController : MonoBehaviour
                 //both stop
                 GirlEnterStop();
                 RabLeaveStop();
+                beatAnim.SetTrigger("run");
 
                 beatTime = beatTime_;
                 return;
@@ -253,8 +257,6 @@ public class WorldController : MonoBehaviour
     public void GirlEnterStop()
     {
         Girl.GetComponent<Girl>().EnterTimeStop();
-        beatAnim.SetTrigger("run");
-
     }
     public void RabEnterStop()
     {

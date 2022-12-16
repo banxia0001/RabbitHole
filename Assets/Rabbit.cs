@@ -16,12 +16,9 @@ public class Rabbit : MonoBehaviour
 
     public GameObject Girl = null;
     public GameObject Rabit = null;
-    public float speedModi;
     public float baseSpeed;
     public float isBack;
     public float[] ModiList;
-    //public float[] HarderModiList;
-
 
     private void Awake()
     {
@@ -30,10 +27,6 @@ public class Rabbit : MonoBehaviour
 
         rabBirth();
     }
-    //public void ResetModi()
-    //{
-    //    modi = ModiList[Random.Range(1, HarderModiList.Length)];
-    //}
     void Start()
     {
        
@@ -43,37 +36,11 @@ public class Rabbit : MonoBehaviour
     }
 
     public LineRenderer lineRenderer;
-    public GameObject Arrow = null;
+    public LineRenderer lineRenderer2;
+    public GameObject Arrow;
     public GameObject ArrowPoint = null,LookOnceDir,LookConstantDir;
     public Vector3 gotoPos;
     public float distanceOffset = 0;
-
-
-   
-    //public void MakeArrowAngle()
-    //{
-    //    Arrow.transform.rotation = Quaternion.AngleAxis(angleRotation * modi, Vector3.forward);
-    //    //Arrow.transform.rotation = transform.rotation;
-    //}
-
-    public void MakeArrowDistance()
-    {
-        //float distance = Vector3.Distance(this.transform.position, Girl.transform.position);
-        //if (distance > 10) distance = 10;
-        float distance = 10;
-        distanceOffset = 2 + distance / .8f;
-
-        ArrowPoint.transform.localPosition = new Vector3(5 + distanceOffset/10, 0, 0);
-        Vector3[] points = new Vector3[2];
-
-        points[0] = transform.position;
-        points[1] = ArrowPoint.transform.position;
-
-        lineRenderer.positionCount = points.Length;
-        lineRenderer.SetPositions(points);
-       
-    }
-
 
     public void SetDestination(float time)
     {
@@ -81,11 +48,8 @@ public class Rabbit : MonoBehaviour
         {
             canMove = true;
             anim.SetTrigger("run");
-
-
-            //gotoPos = ArrowPoint.transform.position;
-            //lineRenderer.gameObject.SetActive(false);
-            
+            lineRenderer.gameObject.SetActive(true);
+            lineRenderer2.gameObject.SetActive(false);
         }
         else
         {
@@ -119,20 +83,22 @@ public class Rabbit : MonoBehaviour
     public void StopMoving()
     {
         lineRenderer.gameObject.SetActive(false);
+        lineRenderer2.gameObject.SetActive(true);
         rb.velocity = Vector3.zero;
         canMove = false;
     }
     public void EnterTimeStop()
     {
+        lineRenderer.gameObject.SetActive(false);
+        lineRenderer2.gameObject.SetActive(true);
+
         if (!Stun)
         {
-            lineRenderer.gameObject.SetActive(true);
             LookPlayer();
         }
         rb.velocity = Vector3.zero;
         canMove = false;
     }
-   // float AngleChangedTemp,AngleChangedSum;
 
 
     public float angleRotation = 0;
@@ -140,46 +106,22 @@ public class Rabbit : MonoBehaviour
     public float angleTurningModi = 1;
     void LookPlayer()
     {
-      
         faceDirection = (Girl.transform.position - transform.position).normalized;
-        //monster_angle = Mathf.Atan2(faceDirection.y, faceDirection.x) * Mathf.Rad2Deg + randomMove;
         angleRotation = Mathf.Atan2(faceDirection.y, faceDirection.x) * Mathf.Rad2Deg;
-
-        //Vector3 dir = Girl.transform.position - transform.position;
-        ////LookOnceDir.transform.right = dir;
-        //transform.right = dir;
-        //LookDir = transform.rotation;
-        //Arrow.transform.right = dir;
-        //Debug.Log("Looked");
     }
     private void Update()
     {
-        //if (angleRotationNow < angleRotationShould) angleRotationNow += angleTurningModi * Time.deltaTime;
-        ////if (angleRotationNow > angleRotationShould) angleRotationNow -= angleTurningModi * Time.deltaTime;
-
         transform.eulerAngles = new Vector3(0, 0, angleRotation * modi);
-        //transform.rotation = Quaternion.AngleAxis(angleRotationNow * modi, Vector3.forward);
         Rabit.transform.rotation = Quaternion.Euler(0, 0, 0);
-        
-
-        //LookConstantDir.transform.right = Girl.transform.position - transform.position;
-        ////angleRotationNow = LookConstantDir.transform.rotation.z - LookOnceDir.transform.rotation.z;
-        ////Arrow.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angleRotationNow * modi));
-        ////Arrow.transform.position = Vector3.ProjectOnPlane(Arrow.transform.position, transform.forward);
-        //ArrowPoint.transform.localPosition = new Vector3(5 + 8 / 10, 0, 0);
-        ////float AngleChanged = Quaternion.Angle(Rabit.transform.rotation, LookConstantDir.transform.rotation);
-        //float AngleChanged = Rabit.transform.rotation.eulerAngles.z - LookConstantDir.transform.rotation.eulerAngles.z;
-        //AngleChangedSum += AngleChanged - AngleChangedTemp;
-        //AngleChangedTemp = AngleChanged;
-
-        //transform.rotation = LookDir * Quaternion.Euler(Vector3.forward * AngleChangedSum * modi);
-
 
         Vector3[] points = new Vector3[2];
         points[0] = transform.position;
         points[1] = ArrowPoint.transform.position;
         lineRenderer.positionCount = points.Length;
+        lineRenderer2.positionCount = points.Length;
+
         lineRenderer.SetPositions(points);
+        lineRenderer2.SetPositions(points);
     }
 
     public void SetValue(float speedModi)
